@@ -1,0 +1,30 @@
+.about-page {
+  padding: 60px 20px;
+  background: #0b0606;
+  color: #faf6f6;
+}
+
+.about-page h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 30px;
+}
+
+.about-page p {
+  max-width: 800px;
+  margin: 15px auto;
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+.about-image {
+  max-width: 800px;
+  margin: 40px auto 0;
+  text-align: center;
+}
+
+.about-image img {
+  max-width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
