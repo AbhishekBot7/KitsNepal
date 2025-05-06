@@ -1,5 +1,22 @@
 <?php
+session_start();
+require_once('dbconnect.php');
+
+// Fetch all products
+$stmt = $conn->prepare("SELECT * FROM product ORDER BY product_id DESC");
+$stmt->execute();
+$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Add to cart functionality
+if (isset($_POST['add_to_cart']) && isset($_SESSION['user_id'])) {
+    $product_id = $_POST['product_id'];
+    $user_id = $_SESSION['user_id'];
+
+    $stmt = $conn->prepare("INSERT INTO cart (user_id, product_id) VALUES (?, ?)");
+    $stmt->execute([$user_id, $product_id]);
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,28 +39,26 @@
     </div>
   </header>
 
-  <section class="kits">
+  <section class="products">
     <div class="container">
-      <h2>Our Latest Kits</h2>
-      <div class="kit-grid">
-        <div class="kit">
-          <img src="../img/NepalHomeKit.jpeg" alt="Nepal National Kit" />
-          <h3>Nepal National Team</h3>
-          <p>Price: NPR 2500</p>
-          <button class="btn">Add to Cart</button>
-        </div>
-        <div class="kit">
-          <img src="../img/RealmadridHomeKit.jpeg" alt="Real Madrid Kit" />
-          <h3>Real Madrid</h3>
-          <p>Price: NPR 2800</p>
-          <button class="btn">Add to Cart</button>
-        </div>
-        <div class="kit">
-          <img src="../img/ManUHomeKit.jpg" alt="Manchester United Kit" />
-          <h3>Manchester United</h3>
-          <p>Price: NPR 2700</p>
-          <button class="btn">Add to Cart</button>
-        </div>
+      <h2>Available Jerseys</h2>
+      <div class="product-grid">
+        <?php foreach ($products as $product): ?>
+          <div class="product-card">
+            <img src="<?php echo $product['image_path']; ?>" alt="<?php echo $product['p_name']; ?>">
+            <h3><?php echo $product['p_name']; ?></h3>
+            <p class="price">NPR <?php echo $product['p_price']; ?></p>
+            <p class="grade"><?php echo $product['p_grade']; ?> Version</p>
+            <?php if ($product['p_qty'] > 0): ?>
+              <form method="POST">
+                <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
+                <button type="submit" name="add_to_cart" class="btn">Add to Cart</button>
+              </form>
+            <?php else: ?>
+              <button class="btn disabled">Out of Stock</button>
+            <?php endif; ?>
+          </div>
+        <?php endforeach; ?>
       </div>
     </div>
   </section>
@@ -54,4 +69,4 @@
     </div>
   </footer>
 </body>
-</html> 
+</html>

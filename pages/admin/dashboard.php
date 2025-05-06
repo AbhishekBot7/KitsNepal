@@ -1,11 +1,23 @@
 <?php
 session_start();
-// Check if user is logged in as admin
-if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header('Location: login.php');
-    exit;
+require_once('../dbconnect.php');
+
+// Check if user is admin
+if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
+    header('Location: ../login.php');
+    exit();
 }
+
+// Get statistics
+$stmt = $conn->prepare("SELECT COUNT(*) as total_orders FROM order_table");
+$stmt->execute();
+$orders = $stmt->fetch(PDO::FETCH_ASSOC);
+
+$stmt = $conn->prepare("SELECT COUNT(*) as total_products FROM product");
+$stmt->execute();
+$products = $stmt->fetch(PDO::FETCH_ASSOC);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,31 +28,28 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 </head>
 <body>
     <div class="admin-container">
-        <nav class="admin-sidebar">
-            <h2>Admin Panel</h2>
+        <nav class="admin-nav">
+            <h2>Admin Dashboard</h2>
             <ul>
-                <li><a href="dashboard.php" class="active">Dashboard</a></li>
-                <li><a href="products.php">Products</a></li>
-                <li><a href="add_product.php">Add Product</a></li>
-                <li><a href="logout.php">Logout</a></li>
+                <li><a href="dashboard.php">Dashboard</a></li>
+                <li><a href="products.php">Manage Products</a></li>
+                <li><a href="orders.php">View Orders</a></li>
+                <li><a href="../logout.php">Logout</a></li>
             </ul>
         </nav>
-        
+
         <main class="admin-content">
-            <h1>Welcome to Admin Dashboard</h1>
-            <div class="dashboard-stats">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Orders</h3>
+                    <p><?php echo $orders['total_orders']; ?></p>
+                </div>
                 <div class="stat-card">
                     <h3>Total Products</h3>
-                    <p><?php
-                        require_once '../../config/database.php';
-                        $query = "SELECT COUNT(*) as total FROM product";
-                        $result = mysqli_query($conn, $query);
-                        $row = mysqli_fetch_assoc($result);
-                        echo $row['total'];
-                    ?></p>
+                    <p><?php echo $products['total_products']; ?></p>
                 </div>
             </div>
         </main>
     </div>
 </body>
-</html> 
+</html>
