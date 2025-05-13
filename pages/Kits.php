@@ -5,7 +5,11 @@ require_once('dbconnect.php');
 // Fetch all products
 $stmt = $conn->prepare("SELECT * FROM product ORDER BY product_id DESC");
 $stmt->execute();
-$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$result = $stmt->get_result();
+$products = [];
+while ($row = $result->fetch_assoc()) {
+    $products[] = $row;
+}
 
 // Add to cart functionality
 if (isset($_POST['add_to_cart']) && isset($_SESSION['user_id'])) {
@@ -13,7 +17,8 @@ if (isset($_POST['add_to_cart']) && isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
 
     $stmt = $conn->prepare("INSERT INTO cart (user_id, product_id) VALUES (?, ?)");
-    $stmt->execute([$user_id, $product_id]);
+    $stmt->bind_param("ii", $user_id, $product_id);
+    $stmt->execute();
 }
 ?>
 
@@ -24,6 +29,22 @@ if (isset($_POST['add_to_cart']) && isset($_SESSION['user_id'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Football Kits Nepal - Kits</title>
   <link rel="stylesheet" href="../css/Home.css" />
+  <style>
+    .product-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .product-link:hover {
+      opacity: 0.9;
+    }
+    .product-card {
+      transition: transform 0.2s;
+    }
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -45,10 +66,12 @@ if (isset($_POST['add_to_cart']) && isset($_SESSION['user_id'])) {
       <div class="product-grid">
         <?php foreach ($products as $product): ?>
           <div class="product-card">
-            <img src="<?php echo $product['image_path']; ?>" alt="<?php echo $product['p_name']; ?>">
-            <h3><?php echo $product['p_name']; ?></h3>
-            <p class="price">NPR <?php echo $product['p_price']; ?></p>
-            <p class="grade"><?php echo $product['p_grade']; ?> Version</p>
+            <a href="product_detail.php?id=<?php echo $product['product_id']; ?>" class="product-link">
+              <img src="<?php echo htmlspecialchars($product['image_path']); ?>" alt="<?php echo htmlspecialchars($product['p_name']); ?>">
+              <h3><?php echo htmlspecialchars($product['p_name']); ?></h3>
+              <p class="price">NPR <?php echo htmlspecialchars($product['p_price']); ?></p>
+              <p class="grade"><?php echo htmlspecialchars($product['p_grade']); ?> Version</p>
+            </a>
             <?php if ($product['p_qty'] > 0): ?>
               <form method="POST">
                 <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
