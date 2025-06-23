@@ -1,28 +1,22 @@
 <?php
 session_start();
-// Check if user is logged in as admin
-if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header('Location: login.php');
-    exit;
+require_once('../dbconnect.php');
+if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
+    header('Location: ../login.php');
+    exit();
 }
-
-require_once '../../config/database.php';
-
 if (!isset($_GET['id'])) {
     header('Location: products.php');
-    exit;
+    exit();
 }
-
-$id = mysqli_real_escape_string($conn, $_GET['id']);
-
+$product_id = intval($_GET['id']);
 // Get product image before deleting
-$query = "SELECT image FROM product WHERE product_id = '$id'";
+$query = "SELECT image FROM product WHERE product_id = '$product_id'";
 $result = mysqli_query($conn, $query);
 $product = mysqli_fetch_assoc($result);
-
 if ($product) {
     // Delete the product
-    $query = "DELETE FROM product WHERE product_id = '$id'";
+    $query = "DELETE FROM product WHERE product_id = '$product_id'";
     if (mysqli_query($conn, $query)) {
         // Delete the image file if it exists
         if ($product['image']) {
@@ -32,13 +26,14 @@ if ($product) {
             }
         }
         header('Location: products.php');
-        exit;
+        exit();
     } else {
-        $error = "Error deleting product: " . mysqli_error($conn);
+        header('Location: products.php?error=delete');
+        exit();
     }
 } else {
     header('Location: products.php');
-    exit;
+    exit();
 }
 ?>
 <!DOCTYPE html>

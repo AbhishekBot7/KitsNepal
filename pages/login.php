@@ -1,4 +1,4 @@
- <?php
+<?php
 session_start();
 if (isset($_SESSION['user_id'])) {
     // Redirect to the home page or dashboard
@@ -11,51 +11,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    $sql = "SELECT * FROM User WHERE email = '$email'";
-    if (isset($email) && !empty($email)) {
-        //success
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $emailError = "** Your email is Invalid **";
-        }
-        $sucess =  "** Congratulations ** ";
-    } else {
-        $error =  "** Please fill up the form! **";
-    }
-    $result = $conn->query($sql);
+    $sql = "SELECT * FROM user WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-       
         $user = $result->fetch_assoc();
         if (password_verify($password, $user['password'])) {
-            if ($user['role']=="Admin") {
-                $_SESSION['user_id'] = $user['user_id'];
-                $_SESSION['role'] = $user['role'];
-                $_SESSION['email'] = $user['email'];
-                header("Location: admin.php");
-                exit();
-                
+            $_SESSION['user_id'] = $user['user_id'];
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['is_admin'] = $user['is_admin'];
+
+            if ($user['is_admin'] == 1) {
+                header("Location: admin/dashboard.php");
             } else {
-                $_SESSION['user_id'] = $user['user_id'];
-                $_SESSION['role'] = $user['role'];
-                $_SESSION['email'] = $user['email'];
                 header("Location: Home.php");
-                exit();
             }
-            
-           
-
+            exit();
         } else {
-            echo "Invalid password.";
+            $error = "Invalid password.";
         }
-       
     } else {
-        echo "No user found.";
+        $error = "No user found.";
     }
-    
 
+    $stmt->close();
     $conn->close();
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,6 +52,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="login-container">
         <h2>Login</h2>
+        <?php if (isset($error)): ?>
+            <div class="error-message"><?php echo $error; ?></div>
+        <?php endif; ?>
         <form action="#" method="POST">
             <div class="form-group">
                 <label for="email">Email</label>
@@ -83,11 +70,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
         <div class="form-footer">
             <p>Don't have an account? <a href="register.php">Register</a></p>
-        
         </div>
+    </div>
 </body>
-<script>
-    document.querySelector("email")
-</script>
 </html>
 

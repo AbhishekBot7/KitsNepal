@@ -1,0 +1,78 @@
+.cart-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+}
+
+.cart-count {
+  position: absolute;
+  top: -8px;
+  right: -12px;
+  background: #ff3c00;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.logout-btn {
+  color: #ff3c00;
+  font-weight: bold;
+}
+
+.logout-btn:hover {
+  color: #ff6b3d;
+}
+
+.profile-btn {
+  color: #333;
+  font-weight: bold;
+}
+
+.profile-btn:hover {
+  color: #ff3c00;
+}
+
+/* Additional navigation styles */
+header {
+  background-color: #333;
+  padding: 1rem 0;
+}
+
+header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  color: white;
+  margin: 0;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+nav a:hover {
+  color: #ff3c00;
+}
+
+nav a.active {
+  color: #ff3c00;
+} 

@@ -10,18 +10,7 @@
   <link rel="stylesheet" href="../css/Home.css" />
 </head>
 <body>
-  <header>
-    <div class="container">
-      <h1>Football Kits Nepal</h1>
-      <nav>
-        <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="Kits.php">Kits</a></li>
-          <li><a href="aboutus.php">About</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+  <?php include '../components/nav.php'; ?>
 
   <section class="hero">
     <div class="container">
@@ -39,16 +28,49 @@
           <img src="../img/NepalHomeKit.jpeg" alt="Nepal National Kit" />
           <h3>Nepal National Team</h3>
           <p>Price: NPR 2500</p>
+          <div class="product-options">
+            <select class="size-select" id="size-nepal">
+              <option value="">Select Size</option>
+              <option value="S">Small</option>
+              <option value="M">Medium</option>
+              <option value="L">Large</option>
+              <option value="XL">X-Large</option>
+            </select>
+            <input type="number" class="quantity-input" id="qty-nepal" min="1" value="1">
+          </div>
+          <button class="cart-btn" onclick="addToCart('Nepal National Team', 2500, 'nepal')">Add to Cart</button>
         </div>
         <div class="kit">
           <img src="../img/RealmadridHomeKit.jpeg" alt="Real Madrid Kit" />
           <h3>Real Madrid</h3>
           <p>Price: NPR 2800</p>
+          <div class="product-options">
+            <select class="size-select" id="size-madrid">
+              <option value="">Select Size</option>
+              <option value="S">Small</option>
+              <option value="M">Medium</option>
+              <option value="L">Large</option>
+              <option value="XL">X-Large</option>
+            </select>
+            <input type="number" class="quantity-input" id="qty-madrid" min="1" value="1">
+          </div>
+          <button class="cart-btn" onclick="addToCart('Real Madrid', 2800, 'madrid')">Add to Cart</button>
         </div>
         <div class="kit">
           <img src="../img/ManUHomeKit.jpg" alt="Manchester United Kit" />
           <h3>Manchester United</h3>
           <p>Price: NPR 2700</p>
+          <div class="product-options">
+            <select class="size-select" id="size-manu">
+              <option value="">Select Size</option>
+              <option value="S">Small</option>
+              <option value="M">Medium</option>
+              <option value="L">Large</option>
+              <option value="XL">X-Large</option>
+            </select>
+            <input type="number" class="quantity-input" id="qty-manu" min="1" value="1">
+          </div>
+          <button class="cart-btn" onclick="addToCart('Manchester United', 2700, 'manu')">Add to Cart</button>
         </div>
       </div>
     </div>
@@ -76,5 +98,50 @@
       <p>&copy; 2025 Football Kits Nepal. All rights reserved.</p>
     </div>
   </footer>
+  <script>
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById('cart-count').textContent = totalItems;
+    }
+
+    function addToCart(productName, price, productId) {
+      const size = document.getElementById(`size-${productId}`).value;
+      const quantity = document.getElementById(`qty-${productId}`).value;
+      
+      if (!size) {
+        alert('Please select a size');
+        return;
+      }
+
+      if (quantity < 1) {
+        alert('Please select a valid quantity');
+        return;
+      }
+
+      // Get existing cart items from localStorage
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      
+      // Add new item to cart
+      cart.push({
+        name: productName,
+        price: price,
+        quantity: parseInt(quantity),
+        size: size
+      });
+      
+      // Save updated cart back to localStorage
+      localStorage.setItem('cart', JSON.stringify(cart));
+      
+      // Update cart count
+      updateCartCount();
+      
+      // Show confirmation message
+      alert(`${productName} (Size: ${size}, Quantity: ${quantity}) has been added to your cart!`);
+    }
+
+    // Update cart count when page loads
+    window.onload = updateCartCount;
+  </script>
 </body>
 </html>
