@@ -54,162 +54,173 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Product - Football Kits Nepal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../../css/admin.css">
-    <style>
-        .admin-container {
-            display: flex;
-            min-height: 100vh;
-        }
-        .admin-sidebar {
-            width: 220px;
-            background: #263445;
-            color: #fff;
-            padding: 32px 0 0 0;
-            min-height: 100vh;
-        }
-        .admin-sidebar h2 {
-            margin-left: 24px;
-            margin-bottom: 32px;
-            font-size: 1.6rem;
-        }
-        .admin-sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
-        .admin-sidebar ul li {
-            margin-bottom: 16px;
-        }
-        .admin-sidebar ul li a {
-            display: block;
-            color: #fff;
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-        .admin-sidebar ul li a.active,
-        .admin-sidebar ul li a:hover {
-            background: #32425a;
-        }
-        .admin-content {
-            flex: 1;
-            background: #fff;
-            min-height: 100vh;
-            padding: 40px 30px;
-            box-sizing: border-box;
-        }
-        .product-form {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background: #f9f9f9;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .form-group textarea {
-            height: 100px;
-            resize: vertical;
-        }
-        .btn-submit {
-            background-color: #ff3c00;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .btn-submit:hover {
-            background-color: #ff6b3d;
-        }
-        .error {
-            color: #721c24;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        .success {
-            color: #155724;
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-    </style>
+    <link rel="stylesheet" href="../../css/forms.css">
 </head>
 <body>
     <div class="admin-container">
-        <nav class="admin-sidebar">
-            <h2>Admin Panel</h2>
-            <ul>
-                <li><a href="dashboard.php">Dashboard</a></li>
-                <li><a href="products.php" class="active">Products</a></li>
-                <li><a href="add_product.php">Add Product</a></li>
-                <li><a href="../logout.php">Logout</a></li>
-            </ul>
-        </nav>
+        <?php include_once('../../includes/admin/sidebar.php'); ?>
+        
+        <button class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
         <main class="admin-content">
-            <h1>Edit Product</h1>
+            <div class="page-header">
+                <h1>Edit Product</h1>
+                <a href="products.php" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Products
+                </a>
+            </div>
+            
             <?php if (isset($error)): ?>
-                <div class="error"><?php echo $error; ?></div>
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <?php echo htmlspecialchars($error); ?>
+                </div>
             <?php endif; ?>
-            <form method="POST" enctype="multipart/form-data" class="product-form">
-                <div class="form-group">
-                    <label for="name">Product Name:</label>
-                    <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($product['p_name']); ?>" required>
+            
+            <form class="form-container" action="edit_product.php?id=<?php echo $product_id; ?>" method="POST" enctype="multipart/form-data">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Product Name</label>
+                        <input type="text" id="name" name="name" required 
+                               placeholder="Enter product name" 
+                               value="<?php echo htmlspecialchars($product['p_name']); ?>">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="price">Price (NPR)</label>
+                        <div class="input-group">
+                            <span class="input-icon">NPR</span>
+                            <input type="number" id="price" name="price" step="0.01" 
+                                   placeholder="0.00" required
+                                   value="<?php echo htmlspecialchars($product['p_price']); ?>">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="quantity">Quantity</label>
+                        <input type="number" id="quantity" name="quantity" 
+                               placeholder="Enter quantity" required
+                               value="<?php echo htmlspecialchars($product['p_qty']); ?>">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="grade">Grade</label>
+                        <div class="select-wrapper">
+                            <select id="grade" name="grade" required>
+                                <option value="" disabled>Select grade</option>
+                                <option value="A" <?php if($product['p_grade']==='A') echo 'selected'; ?>>Grade A</option>
+                                <option value="B" <?php if($product['p_grade']==='B') echo 'selected'; ?>>Grade B</option>
+                                <option value="C" <?php if($product['p_grade']==='C') echo 'selected'; ?>>Grade C</option>
+                                <option value="Player" <?php if($product['p_grade']==='Player') echo 'selected'; ?>>Player Version</option>
+                                <option value="Fan" <?php if($product['p_grade']==='Fan') echo 'selected'; ?>>Fan Version</option>
+                            </select>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" 
+                                 placeholder="Enter product description" 
+                                 required><?php echo htmlspecialchars($product['p_desc']); ?></textarea>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="image">Product Image</label>
+                        <?php if ($product['image']): ?>
+                            <div class="current-image">
+                                <p>Current Image:</p>
+                                <img src="../../img/<?php echo htmlspecialchars($product['image']); ?>" 
+                                     alt="Current Product" class="current-product-image">
+                            </div>
+                        <?php endif; ?>
+                        
+                        <div class="file-upload">
+                            <input type="file" id="image" name="image" accept="image/*">
+                            <div class="file-upload-preview">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload new image or drag and drop</p>
+                                <span>PNG, JPG, JPEG (Max. 5MB)</span>
+                            </div>
+                        </div>
+                        <div class="image-preview" id="imagePreview"></div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="price">Price (NPR):</label>
-                    <input type="number" id="price" name="price" value="<?php echo htmlspecialchars($product['p_price']); ?>" required>
+                
+                <div class="form-actions">
+                    <a href="products.php" class="btn btn-outline">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Update Product
+                    </button>
                 </div>
-                <div class="form-group">
-                    <label for="quantity">Quantity:</label>
-                    <input type="number" id="quantity" name="quantity" value="<?php echo htmlspecialchars($product['p_qty']); ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="grade">Grade:</label>
-                    <select id="grade" name="grade" required>
-                        <option value="original" <?php if($product['p_grade']==='original') echo 'selected'; ?>>Original</option>
-                        <option value="replica" <?php if($product['p_grade']==='replica') echo 'selected'; ?>>Replica</option>
-                        <option value="training" <?php if($product['p_grade']==='training') echo 'selected'; ?>>Training</option>
-                        <option value="Player" <?php if($product['p_grade']==='Player') echo 'selected'; ?>>Player Version</option>
-                        <option value="Fan" <?php if($product['p_grade']==='Fan') echo 'selected'; ?>>Fan Version</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="description">Description:</label>
-                    <textarea id="description" name="description" required><?php echo htmlspecialchars($product['p_desc']); ?></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="image">Product Image:</label>
-                    <input type="file" id="image" name="image" accept="image/*">
-                    <?php if ($product['image']): ?>
-                        <br><img src="../../img/<?php echo $product['image']; ?>" alt="Current Image" width="80">
-                    <?php endif; ?>
-                </div>
-                <button type="submit" class="btn-submit">Update Product</button>
             </form>
         </main>
     </div>
+
+    <script>
+        // Toggle sidebar on mobile
+        document.querySelector('.menu-toggle')?.addEventListener('click', function() {
+            document.querySelector('.admin-sidebar').classList.toggle('active');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.querySelector('.admin-sidebar');
+            const menuToggle = document.querySelector('.menu-toggle');
+            if (window.innerWidth <= 768 && sidebar && menuToggle && 
+                !sidebar.contains(event.target) && 
+                !menuToggle.contains(event.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+        
+        // Update active state on window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                const sidebar = document.querySelector('.admin-sidebar');
+                if (sidebar) sidebar.classList.remove('active');
+            }
+        });
+
+        // Image preview
+        const imageInput = document.getElementById('image');
+        const imagePreview = document.getElementById('imagePreview');
+        
+        if (imageInput && imagePreview) {
+            imageInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        imagePreview.innerHTML = `
+                            <div class="preview-image">
+                                <img src="${e.target.result}" alt="Preview">
+                                <button type="button" class="remove-image">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `;
+                        
+                        // Add event listener to remove button
+                        const removeBtn = imagePreview.querySelector('.remove-image');
+                        if (removeBtn) {
+                            removeBtn.addEventListener('click', function() {
+                                imageInput.value = '';
+                                imagePreview.innerHTML = '';
+                            });
+                        }
+                    }
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    </script>
 </body>
-</html> 
+</html>

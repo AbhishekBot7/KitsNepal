@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 24, 2025 at 08:32 PM
+-- Generation Time: Jun 23, 2025 at 04:01 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -63,7 +63,8 @@ CREATE TABLE `product` (
   `p_price` int(30) NOT NULL,
   `p_qty` int(11) NOT NULL,
   `p_grade` varchar(25) NOT NULL,
-  `p_desc` varchar(200) NOT NULL
+  `p_desc` varchar(200) NOT NULL,
+  `image` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -86,7 +87,8 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`user_id`, `fullname`, `email`, `username`, `password`, `is_admin`) VALUES
-(1, 'Abhishek Karki', 'abhishek7@gmail.com', 'abhi7', '$2y$10$yabzFdeUUs2cpUBS1.ojeeXL8uSc480/o4x7Pbzxrgo/wRVJfVYye', 0);
+(1, 'Abhishek Karki', 'abhi7@gmail.com', 'abhi7', '$2y$10$yabzFdeUUs2cpUBS1.ojeeXL8uSc480/o4x7Pbzxrgo/wRVJfVYye', 1),
+(2, 'Aayush Khatri', 'aayush@gmail.com', 'aayush6', '$2y$10$BEXf8Awlafc7BrYPjxXE1OWJdF5o2Y.MxMaOY91IhSetqSA2VvIFK', 0);
 
 --
 -- Indexes for dumped tables
@@ -146,7 +148,7 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables

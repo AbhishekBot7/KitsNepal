@@ -31,19 +31,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Products - Football Kits Nepal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../../css/admin.css">
+    <link rel="stylesheet" href="../../css/products.css">
 </head>
 <body>
     <div class="admin-container">
-        <nav class="admin-sidebar">
-            <h2>Admin Panel</h2>
-            <ul>
-                <li><a href="dashboard.php">Dashboard</a></li>
-                <li><a href="products.php" class="active">Products</a></li>
-                <li><a href="add_product.php">Add Product</a></li>
-                <li><a href="logout.php">Logout</a></li>
-            </ul>
-        </nav>
+        <?php include_once('../../includes/admin/sidebar.php'); ?>
+        
+        <button class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
 
         <main class="admin-content">
             <h1>Manage Products</h1>
@@ -83,38 +81,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </tbody>
                 </table>
             </div>
-            <h2>Add New Jersey</h2>
-            <form class="product-form" method="POST" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label>Jersey Name</label>
-                    <input type="text" name="p_name" required>
-                </div>
-                <div class="form-group">
-                    <label>Price</label>
-                    <input type="number" name="p_price" required>
-                </div>
-                <div class="form-group">
-                    <label>Quantity</label>
-                    <input type="number" name="p_qty" required>
-                </div>
-                <div class="form-group">
-                    <label>Grade</label>
-                    <select name="p_grade">
-                        <option value="Player">Player Version</option>
-                        <option value="Fan">Fan Version</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea name="p_desc" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Image</label>
-                    <input type="file" name="image" required>
-                </div>
-                <button type="submit">Add Jersey</button>
-            </form>
         </main>
     </div>
+    
+    <script>
+        // Toggle sidebar on mobile
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.admin-sidebar').classList.toggle('active');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.querySelector('.admin-sidebar');
+            const menuToggle = document.querySelector('.menu-toggle');
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !menuToggle.contains(event.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+        
+        // Update active state on window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                document.querySelector('.admin-sidebar').classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>

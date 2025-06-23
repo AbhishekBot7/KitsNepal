@@ -1,5 +1,12 @@
 <?php
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
+// For debugging - uncomment if needed
+// error_log("Index.php - Session ID: " . session_id());
+// error_log("Index.php - User ID: " . ($_SESSION['user_id'] ?? 'Not set'));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -7,10 +14,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Football Kits Nepal</title>
-  <link rel="stylesheet" href="../css/Home.css" />
+  <link rel="stylesheet" href="./css/Home.css" />
 </head>
 <body>
-  <?php include '../components/nav.php'; ?>
+  <?php include './components/nav.php'; ?>
 
   <section class="hero">
     <div class="container">
@@ -25,7 +32,7 @@
       <h2>Our Latest Kits</h2>
       <div class="kit-grid">
         <div class="kit">
-          <img src="../img/NepalHomeKit.jpeg" alt="Nepal National Kit" />
+          <img src="./img/NepalHomeKit.jpeg" alt="Nepal National Kit" />
           <h3>Nepal National Team</h3>
           <p>Price: NPR 2500</p>
           <div class="product-options">
@@ -41,7 +48,7 @@
           <button class="cart-btn" onclick="addToCart('Nepal National Team', 2500, 'nepal')">Add to Cart</button>
         </div>
         <div class="kit">
-          <img src="../img/RealmadridHomeKit.jpeg" alt="Real Madrid Kit" />
+          <img src="./img/RealmadridHomeKit.jpeg" alt="Real Madrid Kit" />
           <h3>Real Madrid</h3>
           <p>Price: NPR 2800</p>
           <div class="product-options">
@@ -57,7 +64,7 @@
           <button class="cart-btn" onclick="addToCart('Real Madrid', 2800, 'madrid')">Add to Cart</button>
         </div>
         <div class="kit">
-          <img src="../img/ManUHomeKit.jpg" alt="Manchester United Kit" />
+          <img src="./img/ManUHomeKit.jpg" alt="Manchester United Kit" />
           <h3>Manchester United</h3>
           <p>Price: NPR 2700</p>
           <div class="product-options">
@@ -80,7 +87,7 @@
     <div class="container">
       <h2>About Us</h2>
       <p>
-       
+
       </p>
     </div>
   </section>
@@ -108,7 +115,7 @@
     function addToCart(productName, price, productId) {
       const size = document.getElementById(`size-${productId}`).value;
       const quantity = document.getElementById(`qty-${productId}`).value;
-      
+
       if (!size) {
         alert('Please select a size');
         return;
@@ -121,7 +128,7 @@
 
       // Get existing cart items from localStorage
       let cart = JSON.parse(localStorage.getItem('cart')) || [];
-      
+
       // Add new item to cart
       cart.push({
         name: productName,
@@ -129,13 +136,13 @@
         quantity: parseInt(quantity),
         size: size
       });
-      
+
       // Save updated cart back to localStorage
       localStorage.setItem('cart', JSON.stringify(cart));
-      
+
       // Update cart count
       updateCartCount();
-      
+
       // Show confirmation message
       alert(`${productName} (Size: ${size}, Quantity: ${quantity}) has been added to your cart!`);
     }
