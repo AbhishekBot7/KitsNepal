@@ -6,25 +6,26 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Get the current page name for active link highlighting
 $current_page = basename($_SERVER['PHP_SELF']);
+$script_name = $_SERVER['SCRIPT_NAME'];
 
-// Determine the base URL based on the current directory
-$is_index = ($current_page === 'index.php');
-$is_admin = strpos($_SERVER['REQUEST_URI'], '/admin/') !== false;
+// Determine the base path based on the current script location
+$is_index = (strpos($script_name, 'index.php') !== false);
+$is_pages_dir = (strpos($script_name, '/pages/') !== false);
 
 // Set base paths
-$base_url = $is_index ? './' : '../';
-$pages_url = $is_index ? './pages/' : '';
-$css_url = $is_index ? './css/' : '../css/';
-$js_url = $is_index ? './js/' : '../js/';
+$base_path = $is_index ? './' : ($is_pages_dir ? '../' : './');
+$css_path = $base_path . 'css/';
+$js_path = $base_path . 'js/';
+$pages_path = $base_path . 'pages/';
 
 // Check if user is logged in
 $is_logged_in = isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
 
 // Get user's first name for greeting
-$user_greeting = '';
+$first_name = '';
 if ($is_logged_in && isset($_SESSION['fullname'])) {
     $fullname = explode(' ', $_SESSION['fullname']);
-    $user_greeting = $fullname[0]; // Get first name
+    $first_name = $fullname[0]; // Get first name
 }
 ?>
 <!DOCTYPE html>
@@ -38,7 +39,7 @@ if ($is_logged_in && isset($_SESSION['fullname'])) {
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?php echo $base_path; ?>css/nav.css">
+    <link rel="stylesheet" href="<?php echo $css_path; ?>nav.css">
 </head>
 <body>
     <header>
@@ -48,14 +49,14 @@ if ($is_logged_in && isset($_SESSION['fullname'])) {
                     <i class="fas fa-futbol"></i> Football Kits Nepal
                 </a>
             </h1>
-            
+
             <nav>
                 <ul>
-                    <li><a href="<?php echo $base_path; ?>index.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'index.php' ? 'active' : ''; ?>">Home</a></li>
-                    <li><a href="<?php echo $base_path; ?>pages/shop.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'shop.php' ? 'active' : ''; ?>">Shop</a></li>
-                    <li><a href="<?php echo $base_path; ?>pages/about.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'about.php' ? 'active' : ''; ?>">About</a></li>
-                    <li><a href="<?php echo $base_path; ?>pages/contact.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'contact.php' ? 'active' : ''; ?>">Contact</a></li>
-                    
+                    <li><a href="<?php echo $base_path; ?>index.php" class="<?php echo $current_page === 'index.php' ? 'active' : ''; ?>">Home</a></li>
+                    <li><a href="<?php echo $pages_path; ?>Kits.php" class="<?php echo $current_page === 'Kits.php' ? 'active' : ''; ?>">Shop</a></li>
+                    <li><a href="<?php echo $pages_path; ?>aboutus.php" class="<?php echo $current_page === 'aboutus.php' ? 'active' : ''; ?>">About</a></li>
+                    <li><a href="<?php echo $pages_path; ?>contact.php" class="<?php echo $current_page === 'contact.php' ? 'active' : ''; ?>">Contact</a></li>
+
                     <!-- Cart Icon -->
                     <li class="cart-item">
                         <a href="<?php echo $base_path; ?>pages/cart.php" class="cart-icon" aria-label="Shopping Cart">
@@ -63,7 +64,7 @@ if ($is_logged_in && isset($_SESSION['fullname'])) {
                             <span class="cart-count">0</span>
                         </a>
                     </li>
-                    
+
                     <!-- User Dropdown or Login/Register Buttons -->
                     <?php if ($is_logged_in): ?>
                         <li class="dropdown">
@@ -73,23 +74,23 @@ if ($is_logged_in && isset($_SESSION['fullname'])) {
                                 <i class="fas fa-chevron-down"></i>
                             </a>
                             <div class="dropdown-content">
-                                <a href="<?php echo $base_path; ?>pages/profile.php"><i class="fas fa-user"></i> My Profile</a>
-                                <a href="<?php echo $base_path; ?>pages/orders.php"><i class="fas fa-box"></i> My Orders</a>
-                                <a href="<?php echo $base_path; ?>pages/wishlist.php"><i class="fas fa-heart"></i> Wishlist</a>
-                                <a href="<?php echo $base_path; ?>pages/settings.php"><i class="fas fa-cog"></i> Settings</a>
-                                <a href="<?php echo $base_path; ?>pages/logout.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                                <a href="<?php echo $pages_path; ?>profile.php"><i class="fas fa-user"></i> My Profile</a>
+                                <a href="<?php echo $pages_path; ?>orders.php"><i class="fas fa-box"></i> My Orders</a>
+                                <a href="<?php echo $pages_path; ?>wishlist.php"><i class="fas fa-heart"></i> Wishlist</a>
+                                <a href="<?php echo $pages_path; ?>settings.php"><i class="fas fa-cog"></i> Settings</a>
+                                <a href="<?php echo $pages_path; ?>logout.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
                             </div>
                         </li>
                     <?php else: ?>
-                        <li><a href="<?php echo $base_path; ?>pages/login.php" class="login-btn">Login</a></li>
-                        <li><a href="<?php echo $base_path; ?>pages/register.php" class="register-btn">Register</a></li>
+                        <li><a href="<?php echo $pages_path; ?>login.php" class="login-btn">Login</a></li>
+                        <li><a href="<?php echo $pages_path; ?>register.php" class="register-btn">Register</a></li>
                     <?php endif; ?>
                 </ul>
             </nav>
         </div>
     </header>
-    
+
     <!-- JavaScript -->
-    <script src="<?php echo $base_path; ?>js/nav.js"></script>
+    <script src="<?php echo $js_path; ?>nav.js"></script>
 </body>
 </html>
