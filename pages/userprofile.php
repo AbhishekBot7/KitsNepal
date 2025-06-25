@@ -17,12 +17,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_SESSION['user_id'];
     $fullname = $_POST['fullname'];
     $email = $_POST['email'];
-    $phone = $_POST['phone'];
+    $phone_number = isset($_POST['phone_number']) ? $_POST['phone_number'] : '';
     $address = $_POST['address'];
 
-    $sql = "UPDATE user SET fullname=?, email=?, phone=?, address=? WHERE user_id=?";
+    $sql = "UPDATE user SET fullname=?, email=?, phone_number=?, address=? WHERE user_id=?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssi", $fullname, $email, $phone, $address, $user_id);
+    $stmt->bind_param("ssssi", $fullname, $email, $phone_number, $address, $user_id);
     
     if ($stmt->execute()) {
         $success_message = "Profile updated successfully!";
@@ -193,7 +193,8 @@ $user = $result->fetch_assoc();
 
             <div class="form-group">
                 <label for="phone">Phone Number</label>
-                <input type="tel" id="phone_number" name="phone_number" value="<?php echo htmlspecialchars($user['phone_number']); ?>" required>
+                <input type="text" id="phone_number" name="phone_number" value="<?php echo htmlspecialchars($user['phone_number']); ?>" required pattern="^[0-9+]{10,15}$" title="Enter digits only, 10-15 digits, can include +">
+                <small style="color:#888; font-size:0.9em;">10-15 digits, can include +</small>
             </div>
 
             <div class="form-group">

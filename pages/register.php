@@ -439,13 +439,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <div class="form-group">
                 <label for="phone_number">Phone Number</label>
                 <input 
-                    type="tel" 
+                    type="text" 
                     id="phone_number" 
                     name="phone_number" 
                     class="form-control <?php echo isset($errors['phone_number']) ? 'is-invalid' : ''; ?>" 
-                    
+                    value="<?php echo htmlspecialchars($formData['phone_number']); ?>"
+                    pattern="^[0-9+]{10,15}$"
                     required
                 >
+                <small style="display: block; margin-top: 0.25rem; color: #6c757d; font-size: 0.8rem;">
+                    10-15 digits, can include +
+                </small>
                 <?php if (isset($errors['phone_number'])): ?>
                     <div class="invalid-feedback">
                         <i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($errors['phone_number']); ?>
