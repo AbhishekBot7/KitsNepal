@@ -4,8 +4,41 @@ require_once('dbconnect.php');
 $is_logged_in = isset($_SESSION['user_id']);
 $cart_items = [];
 $total = 0;
+$message = '';
+
 if ($is_logged_in) {
     $user_id = $_SESSION['user_id'];
+
+    // Handle Add to My Order
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_order']) && isset($_POST['cart_id'])) {
+        $cart_id = intval($_POST['cart_id']);
+        // Check if already in order_table
+        $check = $conn->prepare("SELECT order_id FROM order_table WHERE cart_id = ?");
+        $check->bind_param("i", $cart_id);
+        $check->execute();
+        $check->store_result();
+        if ($check->num_rows > 0) {
+            $message = "This item is already in your orders.";
+        } else {
+            // Get cart item details for total price
+            $stmt = $conn->prepare("SELECT c.*, p.p_price FROM cart c JOIN product p ON c.product_id = p.product_id WHERE c.cart_id = ? AND c.user_id = ?");
+            $stmt->bind_param("ii", $cart_id, $user_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($item = $result->fetch_assoc()) {
+                $total_price = $item['p_price'] * $item['quantity'];
+                $insert = $conn->prepare("INSERT INTO order_table (cart_id, status, total_price) VALUES (?, 'Not Confirmed', ?)");
+                $insert->bind_param("id", $cart_id, $total_price);
+                $insert->execute();
+                $insert->close();
+                $message = "Added to your orders!";
+            }
+            $stmt->close();
+        }
+        $check->close();
+    }
+
+    // Fetch cart items
     $stmt = $conn->prepare("SELECT c.*, p.p_name, p.p_price, p.image, p.p_grade FROM cart c JOIN product p ON c.product_id = p.product_id WHERE c.user_id = ?");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
@@ -14,6 +47,7 @@ if ($is_logged_in) {
         $cart_items[] = $row;
         $total += $row['p_price'] * $row['quantity'];
     }
+    $stmt->close();
 }
 ?>
 <!DOCTYPE html>
@@ -141,6 +175,9 @@ if ($is_logged_in) {
     <div class="cart-container">
         <div class="cart-items">
             <h2>Your Shopping Cart</h2>
+            <?php if ($message): ?>
+                <div style="color: #10b981; margin-bottom: 1rem;"><?= htmlspecialchars($message) ?></div>
+            <?php endif; ?>
             <div id="cart-items-container">
                 <?php if ($is_logged_in): ?>
                     <?php if (empty($cart_items)): ?>
@@ -154,8 +191,11 @@ if ($is_logged_in) {
                                     <div class="cart-item-price">NPR <?php echo htmlspecialchars($item['p_price']); ?></div>
                                     <div>Grade: <?php echo htmlspecialchars(ucfirst($item['p_grade'])); ?></div>
                                     <div>Quantity: <?php echo htmlspecialchars($item['quantity']); ?></div>
+                                    <form method="post" style="margin-top:10px;">
+                                        <input type="hidden" name="cart_id" value="<?php echo $item['cart_id']; ?>">
+                                        <button type="submit" name="add_to_order" class="checkout-btn" style="float:none;">Add to My Order</button>
+                                    </form>
                                 </div>
-                                <!-- Remove button can be implemented here -->
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -167,7 +207,6 @@ if ($is_logged_in) {
                 <div class="cart-total">
                     Total: NPR <span id="cart-total"><?php echo $is_logged_in ? $total : 0; ?></span>
                 </div>
-                <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
             </div>
         </div>
     </div>
@@ -177,16 +216,5 @@ if ($is_logged_in) {
             <p>&copy; 2025 Football Kits Nepal. All rights reserved.</p>
         </div>
     </footer>
-
-    <script>
-        function checkout() {
-            <?php if ($is_logged_in): ?>
-            alert('Proceeding to checkout...');
-            <?php else: ?>
-            alert('Please log in to proceed to checkout.');
-            <?php endif; ?>
-        }
-        // Optionally, you can keep the localStorage cart for guests here
-    </script>
 </body>
 </html> 

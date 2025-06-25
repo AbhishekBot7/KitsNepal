@@ -315,34 +315,41 @@ transform: rotate(180deg);
 }
 
 .dropdown-content {
-display: none;
-position: absolute;
-right: 0;
-top: calc(100% + 0.5rem);
-background: rgba(15, 23, 42, 0.98);
-backdrop-filter: blur(16px);
--webkit-backdrop-filter: blur(16px);
-border: 1px solid var(--glass-border);
-border-radius: var(--radius-md);
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(30, 41, 59, 0.12);
+  border-radius: 12px;
+  min-width: 200px;
+  padding: 0.5rem 0;
+  z-index: 1002;
+  border: 1px solid #e2e8f0;
+  transition: opacity 0.2s, transform 0.2s;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .dropdown:hover .dropdown-content,
 .dropdown:focus-within .dropdown-content {
   display: block;
   opacity: 1;
+  pointer-events: auto;
   transform: translateY(0);
 }
 
 .dropdown-content a {
   color: var(--text-dark);
-  padding: 0.8rem 1rem;
+  padding: 0.85rem 1.5rem;
   text-decoration: none;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  transition: var(--transition);
-  border-bottom: 1px solid var(--border-color);
-  background: white;
+  transition: background 0.2s, color 0.2s, padding-left 0.2s;
+  border-bottom: 1px solid #f1f5f9;
+  background: none;
+  font-size: 1rem;
 }
 
 .dropdown-content a:last-child {
@@ -352,14 +359,14 @@ border-radius: var(--radius-md);
 .dropdown-content a:hover {
   background-color: #f8f9fa;
   color: var(--primary-color);
-  padding-left: 1.2rem;
+  padding-left: 2rem;
 }
 
 .dropdown-content a i {
-  width: 20px;
+  width: 22px;
   text-align: center;
-  color: var(--text-muted);
-  transition: var(--transition);
+  color: #a0aec0;
+  transition: color 0.2s;
 }
 
 .dropdown-content a:hover i {
@@ -367,24 +374,19 @@ border-radius: var(--radius-md);
 }
 
 .dropdown-content .logout-btn {
-  color: var(--danger-color);
-  border-top: 1px solid rgba(239, 71, 111, 0.1) !important;
+  color: #e63946;
+  border-top: 1px solid #f1f5f9 !important;
   margin-top: 0.25rem;
   padding-top: 1rem;
-color: var(--danger-color);
-border-top: 1px solid rgba(239, 71, 111, 0.1) !important;
-margin-top: 0.25rem;
-padding-top: 1rem;
 }
 
-.dropdown-content .logout-btn:hover,
-.dropdown-content .logout-btn:focus {
-background: rgba(239, 71, 111, 0.1) !important;
-color: #ff6b8b !important;
+.dropdown-content .logout-btn:hover {
+  background: #ffe5e5 !important;
+  color: #c1121f !important;
 }
 
 .dropdown-content .logout-btn i {
-  color: var(--danger-color) !important;
+  color: #e63946 !important;
 }
 
 /* Responsive Design */

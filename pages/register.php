@@ -19,7 +19,8 @@ $formData = [
     'fullname' => '',
     'email' => '',
     'username' => '',
-    'phone' => ''
+    'phone_number' => '',
+    'address' => ''
 ];
 
 // Handle form submission
@@ -28,7 +29,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $formData['fullname'] = trim($_POST['fullname'] ?? '');
     $formData['email'] = filter_var(trim($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
     $formData['username'] = trim($_POST['username'] ?? '');
-    $formData['phone'] = preg_replace('/[^0-9+]/', '', $_POST['phone'] ?? '');
+    $formData['phone_number'] = preg_replace('/[^0-9+]/', '', $_POST['phone_number'] ?? '');
+    $formData['address'] = trim($_POST['address'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
     
@@ -54,8 +56,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
     
     // Validate phone (optional)
-    if (!empty($formData['phone']) && !preg_match('/^[0-9+]{10,15}$/', $formData['phone'])) {
-        $errors['phone'] = 'Please enter a valid phone number';
+    if (!empty($formData['phone_number']) && !preg_match('/^[0-9+]{10,15}$/', $formData['phone_number'])) {
+        $errors['phone_number'] = 'Please enter a valid phone number';
+    }
+    
+    // Validate address
+    if (empty($formData['address'])) {
+        $errors['address'] = 'Address is required';
+    } elseif (strlen($formData['address']) < 5 || strlen($formData['address']) > 200) {
+        $errors['address'] = 'Address must be between 5 and 200 characters';
     }
     
     // Validate password
@@ -100,28 +109,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $sql = "INSERT INTO user (
             fullname, 
             email, 
-            username, 
-            password, 
-            phone, 
-            verification_token,
-            token_expires,
-            is_active,
-            created_at,
-            updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())";
+            username,
+            password,
+            phone_number,
+            address
+        ) VALUES (?, ?, ?, ?, ?, ?)";
         
         $stmt = $conn->prepare($sql);
         
         if ($stmt) {
             $stmt->bind_param(
-                "sssssss",
+                "ssssis",
                 $formData['fullname'],
                 $formData['email'],
                 $formData['username'],
                 $hashed_password,
-                $formData['phone'],
-                $verification_token,
-                $verification_expires
+                $formData['phone_number'],
+                $formData['address']
+                
             );
             
             if ($stmt->execute()) {
@@ -432,18 +437,36 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
 
             <div class="form-group">
-                <label for="phone">Phone Number (Optional)</label>
+                <label for="phone_number">Phone Number</label>
                 <input 
                     type="tel" 
-                    id="phone" 
-                    name="phone" 
-                    class="form-control <?php echo isset($errors['phone']) ? 'is-invalid' : ''; ?>" 
-                    value="<?php echo htmlspecialchars($formData['phone']); ?>"
-                    placeholder="e.g., 9800000000"
+                    id="phone_number" 
+                    name="phone_number" 
+                    class="form-control <?php echo isset($errors['phone_number']) ? 'is-invalid' : ''; ?>" 
+                    
+                    required
                 >
-                <?php if (isset($errors['phone'])): ?>
+                <?php if (isset($errors['phone_number'])): ?>
                     <div class="invalid-feedback">
-                        <i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($errors['phone']); ?>
+                        <i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($errors['phone_number']); ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address</label>
+                <textarea
+                    id="address"
+                    name="address"
+                    class="form-control <?php echo isset($errors['address']) ? 'is-invalid' : ''; ?>"
+                    required
+                    minlength="5"
+                    maxlength="200"
+                    style="resize: vertical; min-height: 60px;"
+                ><?php echo htmlspecialchars($formData['address']); ?></textarea>
+                <?php if (isset($errors['address'])): ?>
+                    <div class="invalid-feedback">
+                        <i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($errors['address']); ?>
                     </div>
                 <?php endif; ?>
             </div>

@@ -55,7 +55,7 @@ if ($is_logged_in && isset($_SESSION['fullname'])) {
                     <li><a href="<?php echo $base_path; ?>index.php" class="<?php echo $current_page === 'index.php' ? 'active' : ''; ?>">Home</a></li>
                     <li><a href="<?php echo $pages_path; ?>Kits.php" class="<?php echo $current_page === 'Kits.php' ? 'active' : ''; ?>">Shop</a></li>
                     <li><a href="<?php echo $pages_path; ?>aboutus.php" class="<?php echo $current_page === 'aboutus.php' ? 'active' : ''; ?>">About</a></li>
-                    <li><a href="<?php echo $pages_path; ?>contact.php" class="<?php echo $current_page === 'contact.php' ? 'active' : ''; ?>">Contact</a></li>
+                    
 
                     <!-- Cart Icon -->
                     <li class="cart-item">
@@ -74,10 +74,9 @@ if ($is_logged_in && isset($_SESSION['fullname'])) {
                                 <i class="fas fa-chevron-down"></i>
                             </a>
                             <div class="dropdown-content">
-                                <a href="<?php echo $pages_path; ?>profile.php"><i class="fas fa-user"></i> My Profile</a>
-                                <a href="<?php echo $pages_path; ?>orders.php"><i class="fas fa-box"></i> My Orders</a>
-                                <a href="<?php echo $pages_path; ?>wishlist.php"><i class="fas fa-heart"></i> Wishlist</a>
-                                <a href="<?php echo $pages_path; ?>settings.php"><i class="fas fa-cog"></i> Settings</a>
+                                <a href="<?php echo $pages_path; ?>userprofile.php"><i class="fas fa-user"></i> My Profile</a>
+                                <a href="<?php echo $pages_path; ?>order.php"><i class="fas fa-box"></i> My Orders</a>
+
                                 <a href="<?php echo $pages_path; ?>logout.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
                             </div>
                         </li>

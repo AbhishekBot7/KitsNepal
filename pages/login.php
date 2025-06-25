@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Redirect if already logged in
 if (isset($_SESSION['user_id'])) {
-    $redirect = ($_SESSION['is_admin'] == 1) ? 'admin/dashboard.php' : 'index.php';
+    $redirect = ($_SESSION['is_admin'] == 1) ? 'admin/dashboard.php' : '../index.php';
     header("Location: $redirect");
     exit();
 }
@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = 'Please enter your password.';
     } else {
         // Prepare and execute query
-        $sql = "SELECT user_id, email, password, is_admin, fullname FROM user WHERE email = ? AND is_active = 1 LIMIT 1";
+        $sql = "SELECT user_id, email, password, is_admin, fullname FROM user WHERE email = ? LIMIT 1";
         $stmt = $conn->prepare($sql);
         
         if ($stmt) {
@@ -67,14 +67,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     session_regenerate_id(true);
                     
                     // Redirect based on user role
-                    $redirect = ($user['is_admin'] == 1) ? 'admin/dashboard.php' : 'index.php';
+                    $redirect = ($user['is_admin'] == 1) ? 'admin/dashboard.php' : '../index.php';
                     header("Location: $redirect");
                     exit();
                 } else {
                     $error = 'Invalid email or password.';
                 }
             } else {
-                $error = 'No account found with this email or account is inactive.';
+                $error = 'No account found with this email.';
             }
             $stmt->close();
         } else {
