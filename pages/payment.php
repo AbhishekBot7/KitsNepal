@@ -27,8 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pay_order'])) {
     $merchantCode = "EPAYTEST";
     $secretKey = "8gBm/:&EnhH.1/q";
     $transactionUuid = uniqid("txn-", true);
-    $successUrl = "#";
-    $failureUrl = "#";
+    $successUrl = "http://localhost/KitsNepal/pages/order.php";
+    $failureUrl = "http://localhost/KitsNepal/pages/payment_fail.php";
 
     // Save transaction UUID in session (optional)
     $_SESSION['txn_uuid'] = $transactionUuid;
